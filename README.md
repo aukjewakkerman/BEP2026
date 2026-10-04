@@ -28,7 +28,8 @@ python version:         3.12.14
 torch version:          2.14.0+cpu
 2026-09-23 16:22:41,870 [core INFO] Neither TORCH CUDA nor MPS version not installed/working.
 
-GUI was not enabled (also not checked in GUI). To enable use of GPU: 
-	1. pip uninstall torch
-	2. pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+GUI was not enabled (also not checked in GUI). To enable use of GPU:
+
+		1. pip uninstall torch
+		2. pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 
