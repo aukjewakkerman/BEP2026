@@ -28,7 +28,7 @@ for i = 13
     
     % Extract identifier, e.g. PointA1_R03_im
     token = regexp(maskName,...
-        'Point[A-Z0-9]+_R\d+_(?:im|BU)',...
+        'Point[A-Z0-9]+_R\d+_im',...
         'match','once');
     
     if isempty(token)
@@ -58,10 +58,10 @@ for i = 13
     sarcimg = im2double(imread(sarcFile));
 
     %% Sarcomere segmentation
-    sarcbin = imbinarize(imadjust(sarcimg), ...
+    sarcbin_thresholded = imbinarize(imadjust(sarcimg), ...
         'adaptive','Sensitivity',0.7);
 
-    sarcbin = bwareaopen(sarcbin,350);
+    sarcbin = bwareaopen(sarcbin_thresholded,350);
 
     sarcdil = imclose(sarcbin,strel('disk',20));
 
@@ -118,11 +118,16 @@ for i = 13
     imshow(sarcimg,[]);
     title('Original mCherry')
     
+    %% Sarcomere mask thresholded
+    figure;
+    imshow(sarcbin_thresholded,[]);
+    title('mCherry-derived sarcomere mask')
+
     %% Sarcomere mask
     figure;
     imshow(sarcmask);
-    title('mCherry-derived sarcomere mask');
-    
+    title('mCherry-derived sarcomere mask with morphological operations');
+
     %% Final CM-only mask
     figure;
     imshow(CMmask);
