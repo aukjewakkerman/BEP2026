@@ -1,6 +1,6 @@
 %% Input/output folders
-inputfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Cellpose\austen_ran_on_m1_plate2';
-outputfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\MATLAB\cm_only\masks_austen_m0_plate1_try';
+inputfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Cellpose\austen_ran_on_m0_plate1';
+outputfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\MATLAB\cm_only\visualization_all_steps';
 sarcfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Images_from_NIS_viewer\live_images\20260904_CM-cFB-maturation0\Plate1\8bit_luts_applied';
 
 if ~exist(outputfolder,'dir')
@@ -13,7 +13,7 @@ maskFiles = dir(fullfile(inputfolder,'*_masks.tif'));
 fprintf('Found %d mask files\n',numel(maskFiles));
 
 %for i = 1:numel(maskFiles)
-for i = 13
+for i = 1
 
     fprintf('\nProcessing %s (%d/%d)\n', ...
         maskFiles(i).name, i, numel(maskFiles));
@@ -69,7 +69,7 @@ for i = 13
 
     %% Remove masks without enough mCherry signal
     minFrac = 0.005;
-    minPixels = 30;
+    minPixels = 1000;
 
     labels = unique(cellimg);
     labels(labels==0) = [];
@@ -109,47 +109,67 @@ for i = 13
     sarcmask = sarcclosed;
     
     %% Original CellPose masks
-    figure;
+    fig = figure;
     imshow(cellmask);
     title(sprintf('Original CellPose mask (%d ROIs)', ntotal));
     
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_01_CellPoseMask.png']), 'Resolution',300);
+
+    
     %% Original sarcomere image
-    figure;
+    fig = figure;
     imshow(sarcimg,[]);
-    title('Original mCherry')
+    title('Original mCherry');
+    
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_02_mCherryImage.png']), 'Resolution',300);
     
     %% Sarcomere mask thresholded
-    figure;
+    fig = figure;
     imshow(sarcbin_thresholded,[]);
-    title('mCherry-derived sarcomere mask')
-
-    %% Sarcomere mask
-    figure;
+    title('mCherry-derived sarcomere mask');
+    
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_03_ThresholdedSarcomereMask.png']), 'Resolution',300);
+    
+    %% Sarcomere mask after morphology
+    fig = figure;
     imshow(sarcmask);
     title('mCherry-derived sarcomere mask with morphological operations');
-
+    
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_04_MorphologySarcomereMask.png']), 'Resolution',300);
+    
     %% Final CM-only mask
-    figure;
+    fig = figure;
     imshow(CMmask);
     title(sprintf('Filtered CM mask (%d masks removed)', nremoved));
     
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_05_CMOnlyMask.png']), 'Resolution',300);
+    
     %% RGB overlay
-    rgb = zeros(size(cellimg,1), size(cellimg,2), 3);
+    removedMask = cellmask & ~CMmask;
     
-    rgb(:,:,1) = sarcmask;   % red = sarcomeres
-    rgb(:,:,2) = CMmask;     % green = retained CM masks
+    % Maak RGB-afbeelding vanuit mCherry beeld
+    rgb = repmat(mat2gray(sarcimg),1,1,3);
     
-    figure;
+    % Retained masks groen
+    rgb(:,:,2) = max(rgb(:,:,2), CMmask);
+    
+    % Removed masks rood (overschrijft groen)
+    rgb(:,:,1) = max(rgb(:,:,1), removedMask);
+    rgb(:,:,2) = rgb(:,:,2).*(~removedMask);
+    rgb(:,:,3) = rgb(:,:,3).*(~removedMask);
+    
+    fig = figure;
     imshow(rgb);
-    title('CM masks (green), Sarcomeres (red), Overlap (yellow)');
-
-    %% Save CM-only label image
-    outputName = [maskName '_CM_only.tif'];
-
-    imwrite(uint16(CMmask_labels), ...
-        fullfile(outputfolder,outputName));
-
-    fprintf('Saved: %s\n',outputName);
+    
+    title(sprintf('Retained masks (green), removed masks (red)'));
+    
+    exportgraphics(fig, fullfile(outputfolder,...
+        [token '_06_Overlay.png']), 'Resolution',300);
 
 end
 
