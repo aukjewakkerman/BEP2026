@@ -1,4 +1,4 @@
-Workflow:
+# Workflow
 
 1. image_pre-processing
 
@@ -9,3 +9,5 @@ Workflow:
 4. feature_extraction
 
 5. anova
+
+see README's inside the folders for more information.
