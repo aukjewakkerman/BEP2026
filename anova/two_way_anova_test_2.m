@@ -1,0 +1,79 @@
+%% Load data
+imageTable = readtable('imageTable');
+
+%% ==========================================================
+%% CATEGORICAL VARIABLES
+%% ==========================================================
+
+imageTable.Maturity = categorical(imageTable.Maturity);
+imageTable.Culture  = categorical(imageTable.Culture);
+imageTable.Well     = categorical(imageTable.Well);
+
+%% ==========================================================
+%% AREA ANOVA
+%% ==========================================================
+
+disp(" ")
+disp("==================================================")
+disp("AREA")
+disp("==================================================")
+
+[pArea,tblArea,statsArea] = anovan( ...
+    imageTable.Area,...
+    {imageTable.Maturity,imageTable.Culture},...
+    'model','interaction',...
+    'varnames',{'Maturity','Culture'},...
+    'display','on');
+
+%% ==========================================================
+%% CIRCULARITY ANOVA
+%% ==========================================================
+
+disp(" ")
+disp("==================================================")
+disp("CIRCULARITY")
+disp("==================================================")
+
+[pCirc,tblCirc,statsCirc] = anovan( ...
+    imageTable.Circularity,...
+    {imageTable.Maturity,imageTable.Culture},...
+    'model','interaction',...
+    'varnames',{'Maturity','Culture'},...
+    'display','on');
+
+%% ==========================================================
+%% ASPECT RATIO ANOVA
+%% ==========================================================
+
+disp(" ")
+disp("==================================================")
+disp("ASPECT RATIO")
+disp("==================================================")
+
+[pAR,tblAR,statsAR] = anovan( ...
+    imageTable.AspectRatio,...
+    {imageTable.Maturity,imageTable.Culture},...
+    'model','interaction',...
+    'varnames',{'Maturity','Culture'},...
+    'display','on');
+
+%% ==========================================================
+%% COLLECT P-VALUES
+%% ==========================================================
+
+anovaResults = table( ...
+    ["Area";"Circularity";"AspectRatio"],...
+    [pArea(1); pCirc(1); pAR(1)],...
+    [pArea(2); pCirc(2); pAR(2)],...
+    [pArea(3); pCirc(3); pAR(3)],...
+    'VariableNames',{ ...
+    'Feature',...
+    'P_Maturity',...
+    'P_Culture',...
+    'P_Interaction'});
+
+disp(" ")
+disp("==================================================")
+disp("ANOVA RESULTS")
+disp("==================================================")
+disp(anovaResults)
