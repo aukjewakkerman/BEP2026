@@ -1,7 +1,7 @@
 %% Input and output folders
 
-inputFolder = "C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Images_from_NIS_viewer\live_images\20260904_CM-cFB-maturation0\Plate1\train_test_copy";
-outputFolder = "C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Images_from_NIS_viewer\live_images\20260904_CM-cFB-maturation0\Plate1\train_test_copy\8bit_luts_train_test";
+inputFolder = "C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Images_from_NIS_viewer\staining_images\WGA_test_m1\WGA_cellpose";
+outputFolder = "C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Images_from_NIS_viewer\live_images\20260911_CM-cFB-maturation1\Plate2\8bit_luts_applied";
 
 if ~exist(outputFolder,'dir')
     mkdir(outputFolder);
