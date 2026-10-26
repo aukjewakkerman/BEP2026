@@ -5,7 +5,7 @@ sarcfolder = 'C:\Users\20223228\OneDrive - TU Eindhoven\Documents\Vakken\BEP\Ima
 mCherryFiles = dir(fullfile(sarcfolder,'*mCherry*.tif'));
 
 %% Choose image to inspect
-imgIdx = 1;   % change if desired
+imgIdx = 1;
 
 sarcimg = im2double(imread(fullfile( ...
     mCherryFiles(imgIdx).folder,...
@@ -14,15 +14,19 @@ sarcimg = im2double(imread(fullfile( ...
 %% Threshold sensitivities to test
 sensitivities = [0.2 0.3 0.4 0.5 0.6 0.7 0.8];
 
-figure('Name',mCherryFiles(imgIdx).name);
+fig = figure('Name',mCherryFiles(imgIdx).name,...
+             'Color','w',...
+             'Position',[100 100 1400 700]);
 
-% Original image
-subplot(2,4,1)
+t = tiledlayout(2,4,'TileSpacing','compact','Padding','compact');
+
+%% Original image
+nexttile
 imshow(sarcimg,[])
-title('Original mCherry')
+title('mCherry image')
 
+%% Thresholded images
 for i = 1:numel(sensitivities)
-
     s = sensitivities(i);
 
     bw = imbinarize( ...
@@ -30,8 +34,15 @@ for i = 1:numel(sensitivities)
         'adaptive', ...
         'Sensitivity',s);
 
-    subplot(2,4,i+1)
+    nexttile
     imshow(bw)
-    title(sprintf('Sens = %.1f',s))
-
+    title(sprintf('Sensitivity threshold = %.1f',s))
 end
+
+%% Save figure
+scriptFolder = fileparts(mfilename('fullpath'));
+
+saveName = fullfile(scriptFolder, ...
+    [erase(mCherryFiles(imgIdx).name,'.tif') '_threshold_comparison.png']);
+
+exportgraphics(fig,saveName,'Resolution',300);
