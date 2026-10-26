@@ -7,3 +7,5 @@ Workflow:
 3. mask_filtering
    
 4. feature_extraction
+
+5. anova
