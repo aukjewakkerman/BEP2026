@@ -1,4 +1,4 @@
-# scripts
+# Scripts
 run_Cellpose-SAM.ipynb to run model on experimental dataset. make sure to select the correct model, load images together or individually on GPU and select correct thresholds before running.
 
 train_Cellpose-SAM.ipynb: script for training model, and also testing with evaluation metrics and visualization of ground truth and predicted masks.
